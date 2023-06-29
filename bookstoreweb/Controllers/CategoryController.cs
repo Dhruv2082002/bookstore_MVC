@@ -27,7 +27,7 @@ namespace bookstoreweb.Controllers
         {
             if (_obj.Name == _obj.DisplayOrder.ToString())
             {
-                ModelState.AddModelError("Display Order and Name must not be the same","Name");
+                ModelState.AddModelError("Name","Display Order and Name must not be the same");
             }
 
             if (ModelState.IsValid)
@@ -39,5 +39,59 @@ namespace bookstoreweb.Controllers
             }
             return View();
         }
+
+        
+        public IActionResult Edit(int? id)
+        {
+            if (id == 0 || id == null)
+            {
+                return NotFound();   
+            }
+
+            Category? Target = _db.Categories.Find(id);
+            //Category? target2 = _db.Categories.FirstOrDefault(u => u.CategoryId == id);
+            //Category? target2 = _db.Categories.Where(u => u.CategoryId == id).FirstOrDefault();
+            return View(Target); 
+        }
+       
+        [HttpPost]
+
+        public IActionResult Edit(Category obj)
+        {
+            if (obj.Name == obj.DisplayOrder.ToString())
+            {
+                ModelState.AddModelError("Name", "Display Order and Name must not be the same");
+            }
+
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(obj);
+                _db.SaveChanges();
+
+                return RedirectToAction("Index");
+            }
+            return View();
+            
+        }
+
+
+
+
+        [HttpPost,ActionName("Delete")]
+
+        public IActionResult Delete(int id)
+        {
+            Category? obj = _db.Categories.Find(id);
+            if (obj == null)
+            {
+                return NotFound();
+            }
+
+            _db.Categories.Remove(obj);
+            _db.SaveChanges();
+
+            return RedirectToAction("Index");
+        }
+
     }
 }
